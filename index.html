@@ -53,15 +53,21 @@
         <input type="text" id="cbmInput" placeholder="CBM">
         <input type="text" id="pesoKgMaritimo" placeholder="Peso en kilogramos (opcional)">
     </div>
-    <div id="avisoCodigoArancelario" style="text-align: left; margin-bottom: 10px;">
-        <p>* Si no tienes el código arancelario, deja el campo en blanco.</p>
+    <div id="avisoCodigoArancelario" style="font-style: italic; font-size: small; color: #888; margin-top: 1px;">
+        <p>*Si no tienes el código arancelario, deja el campo en blanco.<br>
+            **Si no sabes sobre el código de arancelario presiona el botón Contactenos y te brindaremos soporte.</p>
     </div>
     <input type="text" id="codigoArancelario" placeholder="Código Arancelario">
     <button onclick="cargarYCalcular()">Calcular</button>
     <button onclick="resetForm()">Nuevo Cálculo</button>
     <div id="result"></div>
-    <p style="margin-top: 20px;">Esta cotización es un aproximado, para una cotización a detalle presione el botón <strong>Contactenos</strong> para comunicarse con nosotros y brindarle asesoría personalizada.</p>
-    <a href="https://wa.me/50373989087" target="_blank"><button>Contactenos</button></a>
+    <p style="margin-top: 10px;">**Esta cotización es un aproximado, para una cotización a detalle presione el botón <strong>Enviar Consulta</strong> para comunicarse con nosotros y brindarle asesoría personalizada.</p>
+
+  <!-- 
+    <a href="https://wa.me/50373989087" target="_blank"><button>Contactenos</button></a> 
+   -->
+
+    <button onclick="generarMensajeWhatsApp()">Enviar consulta</button>
 </div>
 
 <script>
@@ -155,12 +161,12 @@
         resultContainer.innerHTML = `
             <p>Tipo de Flete: ${tipoFleteTexto}</p>
             <p>Costo de Flete: $${costoFlete.toFixed(2)}</p>
-            <p>Costo de Seguro: $${costoSeguro.toFixed(2)}</p>
-            <p>Costo de Arancel: $${valorArancelario.toFixed(2)}</p>
-            <p>Valor IVA: $${valorIVA.toFixed(2)}</p>
+            <p>Costo de Seguro(1.5%): $${costoSeguro.toFixed(2)}</p>
+            <p>Costo de DAI: $${valorArancelario.toFixed(2)}</p>
+            <p>Valor IVA (13%): $${valorIVA.toFixed(2)}</p>
             <p>Costo de Trámites Aduanales: $${tramitesAduanales.toFixed(2)}</p>
             <p>Cargos en Origen: $${cargosOrigen.toFixed(2)}</p>
-            <p>Total Importación: $${totalImportacion.toFixed(2)}</p>
+            <p>Total Costo Importación: $${totalImportacion.toFixed(2)}</p>
             <p>Total: $${total.toFixed(2)}</p>
         `;
     }
@@ -175,8 +181,11 @@
         document.getElementById("codigoArancelario").value = "";
         document.getElementById("campoPeso").style.display = "none";
         document.getElementById("campoCbm").style.display = "none";
-        document.getElementById("result").innerHTML = "";
+        document.getElementById("mensajeMaritimo").style.display = "none";
+                document.getElementById("result").innerHTML = "";
     }
 </script>
+
+<script src="funciones.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@ function generarMensajeWhatsApp() {
     const resultado = resultContainer.innerText;
 
     // Generar el mensaje para WhatsApp
-    const mensajeWhatsApp = `¡Hola! Aquí están los resultados de la consulta de importación:\n\n${resultado}`;
+    const mensajeWhatsApp = `Buen día, deseo mas información para poder realizar mi importación, adjunto la cotización realizada en su página web:\n\n${resultado}`;
 
     // Crear el enlace para enviar el mensaje por WhatsApp
     const linkWhatsApp = `https://wa.me/50373989087?text=${encodeURIComponent(mensajeWhatsApp)}`;

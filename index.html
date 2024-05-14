@@ -44,6 +44,8 @@
         <option value="" disabled selected>Elige el tipo de flete</option>
         <option value="aereo">Flete Aéreo</option>
         <option value="maritimo">Flete Marítimo</option>
+        <option value="maritimo20">Flete Marítimo FCL 20</option>
+        <option value="maritimo40">Flete Marítimo FCL 40</option>
     </select>
     <p id="mensajeMaritimo" style="display: none; font-style: italic; font-size: small; color: #888; margin-top: 1px;">*Puedes escribir ya sea el CBM o el Peso (en Kg) total de tu producto.<br>** Si no sabes sobre el CBM, presiona el botón Contactenos y te brindaremos soporte.</p>
     <div id="campoPeso" style="display: none;">
@@ -62,10 +64,6 @@
     <button onclick="resetForm()">Nuevo Cálculo</button>
     <div id="result"></div>
     <p style="margin-top: 10px;">**Esta cotización es un aproximado, para una cotización a detalle presione el botón <strong>Enviar Consulta</strong> para comunicarse con nosotros y brindarle asesoría personalizada.</p>
-
-  <!-- 
-    <a href="https://wa.me/50373989087" target="_blank"><button>Contactenos</button></a> 
-   -->
 
     <button onclick="generarMensajeWhatsApp()">Enviar consulta</button>
 </div>
@@ -106,70 +104,80 @@
         }
     }
 
-    // Función para calcular los costos de importación
-    function calcularCostos(codigosArancelarios) {
-        const valorCompra = parseFloat(document.getElementById("valorCompra").value.trim());
-        const tipoFlete = document.getElementById("tipoFlete").value;
-        let pesoKg = 0;
-        let cbm = 0;
+// Función para calcular los costos de importación
+function calcularCostos(codigosArancelarios) {
+    const valorCompra = parseFloat(document.getElementById("valorCompra").value.trim());
+    const tipoFlete = document.getElementById("tipoFlete").value;
+    let pesoKg = 0;
+    let cbm = 0;
 
-        if (tipoFlete === "aereo") {
-            pesoKg = parseFloat(document.getElementById("pesoKg").value.trim());
-        } else if (tipoFlete === "maritimo") {
-            const pesoKgMaritimo = parseFloat(document.getElementById("pesoKgMaritimo").value.trim());
-            if (!isNaN(pesoKgMaritimo) && pesoKgMaritimo > 0) {
-                pesoKg = pesoKgMaritimo;
-                cbm = pesoKg / 350;
-            } else {
-                cbm = parseFloat(document.getElementById("cbmInput").value.trim());
-                pesoKg = cbm * 350;
-            }
-        }
+    let costoFlete = 0;
+    let tramitesAduanales = 0;
+    let cargosOrigen = 0;
 
-        let costoFlete = 0;
-        let tramitesAduanales = 0;
-        let cargosOrigen = 0;
+    let tipoFleteTexto = "";
 
-        let tipoFleteTexto = "";
-
-        if (tipoFlete === "aereo") {
-            tipoFleteTexto = "Flete Aéreo";
-            costoFlete = pesoKg * 18;
-            tramitesAduanales = 100;
-            cargosOrigen = 25;
-        } else if (tipoFlete === "maritimo") {
-            tipoFleteTexto = "Flete Marítimo";
-            costoFlete = cbm * 199;
-            tramitesAduanales = 250;
-            cargosOrigen = 300;
-        }
-
-        const codigoArancelario = document.getElementById("codigoArancelario").value.trim();
-        const porcentajeArancelario = codigosArancelarios[codigoArancelario] || 0;
-        const valorArancelario = (valorCompra + costoFlete) * (porcentajeArancelario / 100);
-
-        const costoSeguro = valorCompra * 0.015;
-        const valorArancel = valorCompra * 0.015;
-
-        const valorIVA = (valorCompra + costoFlete + costoSeguro + valorArancelario) * 0.13;
-
-        const totalImportacion = costoFlete + costoSeguro + valorArancelario + valorIVA + tramitesAduanales + cargosOrigen;
-
-        const total = valorCompra + totalImportacion;
-
-        const resultContainer = document.getElementById("result");
-        resultContainer.innerHTML = `
-            <p>Tipo de Flete: ${tipoFleteTexto}</p>
-            <p>Costo de Flete: $${costoFlete.toFixed(2)}</p>
-            <p>Costo de Seguro(1.5%): $${costoSeguro.toFixed(2)}</p>
-            <p>Costo de DAI: $${valorArancelario.toFixed(2)}</p>
-            <p>Valor IVA (13%): $${valorIVA.toFixed(2)}</p>
-            <p>Costo de Trámites Aduanales: $${tramitesAduanales.toFixed(2)}</p>
-            <p>Cargos en Origen: $${cargosOrigen.toFixed(2)}</p>
-            <p>Total Costo Importación: $${totalImportacion.toFixed(2)}</p>
-            <p>Total: $${total.toFixed(2)}</p>
-        `;
+    if (tipoFlete === "aereo") {
+        tipoFleteTexto = "Flete Aéreo";
+        pesoKg = parseFloat(document.getElementById("pesoKg").value.trim());
+        costoFlete = pesoKg * 18;
+        tramitesAduanales = 100;
+        cargosOrigen = 25;
+    } else if (tipoFlete === "maritimo") {
+        tipoFleteTexto = "Flete Marítimo";
+        cbm = parseFloat(document.getElementById("cbmInput").value.trim());
+        pesoKg = cbm * 350;
+        costoFlete = cbm * 199;
+        tramitesAduanales = 250;
+        cargosOrigen = 300;
+    } else if (tipoFlete === "maritimo20") {
+        tipoFleteTexto = "Flete Marítimo FCL 20";
+        costoFlete = 3400;
+        tramitesAduanales = 250;
+        cargosOrigen = 300;
+    } else if (tipoFlete === "maritimo40") {
+        tipoFleteTexto = "Flete Marítimo FCL 40";
+        costoFlete = 4200;
+        tramitesAduanales = 250;
+        cargosOrigen = 300;
     }
+
+    const codigoArancelario = document.getElementById("codigoArancelario").value.trim();
+    const porcentajeArancelario = codigosArancelarios[codigoArancelario];
+
+    let costoDAI = 0;
+    let mensajeArancelario = "";
+
+    if (porcentajeArancelario !== undefined) {
+        costoDAI = (valorCompra + costoFlete) * (porcentajeArancelario / 100);
+    } else {
+        mensajeArancelario = "Código Arancelario no encontrado";
+    }
+
+    const costoSeguro = valorCompra * 0.015;
+    const valorIVA = (valorCompra + costoFlete + costoSeguro + costoDAI) * 0.13;
+
+    const totalImportacion = costoFlete + costoSeguro + costoDAI + valorIVA + tramitesAduanales + cargosOrigen;
+
+    const total = valorCompra + totalImportacion;
+
+    const resultContainer = document.getElementById("result");
+    resultContainer.innerHTML = `
+        <p>Tipo de Flete: ${tipoFleteTexto}</p>
+        <p>Costo de Flete: $${costoFlete.toFixed(2)}</p>
+        <p>Costo de Seguro(1.5%): $${costoSeguro.toFixed(2)}</p>
+        <p>Costo de DAI (${codigoArancelario !== '' ? `Arancel ${porcentajeArancelario}%` : 'No encontrado'}): $${costoDAI.toFixed(2)}</p>
+        <p>Valor IVA (13%): $${valorIVA.toFixed(2)}</p>
+        <p>Costo de Trámites Aduanales: $${tramitesAduanales.toFixed(2)}</p>
+        <p>Cargos en Origen: $${cargosOrigen.toFixed(2)}</p>
+        <p>Total Costo Importación: $${totalImportacion.toFixed(2)}</p>
+        <p>Total: $${total.toFixed(2)}</p>
+        <p>${mensajeArancelario}</p>
+    `;
+}
+
+
+
 
     // Función para limpiar el formulario
     function resetForm() {
@@ -191,10 +199,10 @@
     
     // Obtener los datos necesarios del resultado
     const resultContainer = document.getElementById("result");
-    const resultado = resultContainer.innerHTML;
+    const resultado = resultContainer.textContent; // Usar textContent en lugar de innerText
 
     // Generar el mensaje para WhatsApp
-    const mensajeWhatsApp = `Buen día, deseo mas información para poder realizar mi importación, adjunto la cotización realizada en su página web:\n\n${resultado}`;
+    const mensajeWhatsApp = `Buen día, deseo más información para poder realizar mi importación, adjunto la cotización realizada en su página web:\n\n${resultado}`;
 
     // Crear el enlace para enviar el mensaje por WhatsApp
     const linkWhatsApp = `https://wa.me/50373989087?text=${encodeURIComponent(mensajeWhatsApp)}`;
@@ -202,6 +210,8 @@
     // Abrir una nueva ventana o pestaña con el enlace
     window.open(linkWhatsApp);
 }
+
+
 
  
 </script>

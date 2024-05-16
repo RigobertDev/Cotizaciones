@@ -63,7 +63,9 @@
     <button onclick="cargarYCalcular()">Calcular</button>
     <button onclick="resetForm()">Nuevo Cálculo</button>
     <div id="result"></div>
-    <p style="margin-top: 10px;">**Esta cotización es un aproximado, para una cotización a detalle presione el botón <strong>Enviar Consulta</strong> para comunicarse con nosotros y brindarle asesoría personalizada.</p>
+    <p style="margin-top: 10px;">
+        <p>*Costo de contenedor completo (FCL) puede variar según puerto de salida.</p>
+        **Esta cotización es un aproximado, para una cotización a detalle presione el botón <strong>Enviar Consulta</strong> para comunicarse con nosotros y brindarle asesoría personalizada.</p>
 
     <button onclick="generarMensajeWhatsApp()">Enviar consulta</button>
 </div>
@@ -171,7 +173,7 @@ function calcularCostos(codigosArancelarios) {
         <p>Costo de Trámites Aduanales: $${tramitesAduanales.toFixed(2)}</p>
         <p>Cargos en Origen: $${cargosOrigen.toFixed(2)}</p>
         <p>Total Costo Importación: $${totalImportacion.toFixed(2)}</p>
-        <p>Total: $${total.toFixed(2)}</p>
+        <p>Total Importación: $${total.toFixed(2)}</p>
         <p>${mensajeArancelario}</p>
     `;
 }

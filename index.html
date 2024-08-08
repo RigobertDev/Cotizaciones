@@ -131,17 +131,17 @@ function calcularCostos(codigosArancelarios) {
         tipoFleteTexto = "Flete Marítimo";
         cbm = parseFloat(document.getElementById("cbmInput").value.trim());
         pesoKg = cbm * 350;
-        costoFlete = cbm * 199;
+        costoFlete = cbm * 175;
         tramitesAduanales = 250;
         cargosOrigen = 300;
     } else if (tipoFlete === "maritimo20") {
         tipoFleteTexto = "Flete Marítimo FCL 20";
-        costoFlete = 3400;
+        costoFlete = 6900;
         tramitesAduanales = 250;
         cargosOrigen = 300;
     } else if (tipoFlete === "maritimo40") {
         tipoFleteTexto = "Flete Marítimo FCL 40";
-        costoFlete = 4200;
+        costoFlete = 7500;
         tramitesAduanales = 250;
         cargosOrigen = 300;
     }

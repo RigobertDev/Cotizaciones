@@ -1,91 +1,117 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Consulta de Importación</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-    #container {
-        max-width: 400px;
-        margin: 50px auto;
-        text-align: center;
-    }
-    input[type="text"], select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        box-sizing: border-box;
-    }
-    button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-    button:hover {
-        background-color: #0056b3;
-    }
-    #result {
-        margin-top: 20px;
-        text-align: left;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Importación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        input[type="text"], select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            text-align: left;
+            font-size: 14px;
+            color: #444;
+        }
+        #mensajeMaritimo,
+        #avisoCodigoArancelario {
+            font-style: italic;
+            font-size: 14px;
+            color: #888;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        #result p {
+            margin: 5px 0;
+        }
+        p {
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-<div id="container">
-    <h2>Consulta de Importación</h2>
-    <input type="text" id="valorCompra" placeholder="Valor de la compra" required>
-    
-    <select id="tipoFlete" onchange="toggleCampos()" required>
-        <option value="" disabled selected>Elige el tipo de flete</option>
-        <option value="aereo">Flete Aéreo</option>
-        <option value="maritimo">Flete Marítimo</option>
-        <option value="maritimo20">Flete Marítimo FCL 20</option>
-        <option value="maritimo40">Flete Marítimo FCL 40</option>
-    </select>
-    
-    <p id="mensajeMaritimo" style="display: none; font-style: italic; font-size: small; color: #888; margin-top: 1px;">
-        *Puedes escribir ya sea el CBM o el Peso (en Kg) total de tu producto, (NO ES NECESARIO COLOCAR AMBOS).<br>
-        **Si la carga es menor a 1 CBM se calculará en base a 1 CBM.<br>
-        ***Si no sabes sobre el CBM, presiona el botón <strong>Contáctenos</strong> y te brindaremos soporte.
-    </p>
-    
-    <div id="campoPeso" style="display: none;">
-        <input type="text" id="pesoKg" placeholder="Peso en kilogramos">
-    </div>
-    
-    <div id="campoCbm" style="display: none;">
-        <input type="text" id="cbmInput" placeholder="CBM">
-        <input type="text" id="pesoKgMaritimo" placeholder="Peso en kilogramos (opcional)">
-    </div>
-    
-    <div id="avisoCodigoArancelario" style="font-style: italic; font-size: small; color: #888; margin-top: 1px;">
-        <p>
-            *Si no tienes el código arancelario, deja el campo en blanco.<br>
-            **Si no sabes sobre el código arancelario, presiona el botón <strong>Contáctenos</strong> y te brindaremos soporte.
+    <div id="container">
+        <h2>Consulta de Importación</h2>
+        <input type="text" id="valorCompra" placeholder="Valor de la compra (USD)" required>
+
+        <select id="tipoFlete" onchange="toggleCampos()" required>
+            <option value="" disabled selected>Elige el tipo de flete</option>
+            <option value="aereo">Flete Aéreo</option>
+            <option value="maritimo">Flete Marítimo</option>
+            <option value="maritimo20">Flete Marítimo FCL 20</option>
+            <option value="maritimo40">Flete Marítimo FCL 40</option>
+        </select>
+
+        <p id="mensajeMaritimo" style="display: none;">
+            *Puedes escribir ya sea el CBM o el peso total de tu carga.<br>
+            **Si la carga es menor a 1 CBM, se calculará como 1 CBM.<br>
+            ***Si necesitas ayuda, presiona el botón <strong>Enviar consulta</strong>.
         </p>
+
+        <div id="campoPeso" style="display: none;">
+            <input type="text" id="pesoKg" placeholder="Peso en kilogramos">
+        </div>
+
+        <div id="campoCbm" style="display: none;">
+            <input type="text" id="cbmInput" placeholder="CBM">
+        </div>
+
+        <div id="avisoCodigoArancelario">
+            *Si no tienes el código arancelario, deja el campo vacío.<br>
+            **Para ayuda, presiona el botón <strong>Enviar consulta</strong>.
+        </div>
+
+        <input type="text" id="codigoArancelario" placeholder="Código Arancelario (opcional)">
+        <button onclick="cargarYCalcular()">Calcular</button>
+        <button onclick="resetForm()">Nuevo Cálculo</button>
+
+        <div id="result"></div>
+
+        <p>
+            *El costo de contenedor completo puede variar según puerto de salida.<br>
+            **Esta es una estimación aproximada. Para más detalles, contáctanos.
+        </p>
+        <button onclick="generarMensajeWhatsApp()">Enviar consulta</button>
     </div>
-    
-    <input type="text" id="codigoArancelario" placeholder="Código Arancelario">
-    <button onclick="cargarYCalcular()">Calcular</button>
-    <button onclick="resetForm()">Nuevo Cálculo</button>
-    
-    <div id="result"></div>
-    
-    <br>
-    <p style="margin-top: 10px;">
-        *Costo de contenedor completo (FCL) puede variar según puerto de salida.<br>
-        **Esta cotización es un aproximado. Para una cotización a detalle, presiona el botón <strong>Enviar Consulta</strong> para comunicarte con nosotros y recibir asesoría personalizada.
-    </p>
-    <br>
-    
-    <button onclick="generarMensajeWhatsApp()">Enviar consulta</button>
-</div>
 
 <script>
     // Constantes para los costos

@@ -108,68 +108,82 @@ function toggleCampos() {
     }
 }
 
+// Función para calcular los costos de importación
 function calcularCostos(codigosArancelarios) {
     const valorCompra = parseFloat(document.getElementById("valorCompra").value.trim());
-    if (isNaN(valorCompra) || valorCompra <= 0) {
-        alert("Por favor, ingresa un valor de compra válido.");
-        return;
-    }
-
     const tipoFlete = document.getElementById("tipoFlete").value;
-    let pesoKg = 0, cbm = 0, costoFlete = 0, tramitesAduanales = 0, cargosOrigen = 0;
+    let pesoKg = 0;
+    let cbm = 0;
+
+    let costoFlete = 0;
+    let tramitesAduanales = 0;
+    let cargosOrigen = 0;
+
     let tipoFleteTexto = "";
 
-    // Calcular costos según tipo de flete
     if (tipoFlete === "aereo") {
-        pesoKg = parseFloat(document.getElementById("pesoKg").value.trim());
-        if (isNaN(pesoKg) || pesoKg <= 0) {
-            alert("Por favor, ingresa un peso válido para el flete aéreo.");
-            return;
-        }
         tipoFleteTexto = "Flete Aéreo";
+        pesoKg = parseFloat(document.getElementById("pesoKg").value.trim());
         costoFlete = pesoKg * 18;
         tramitesAduanales = 100;
         cargosOrigen = 25;
     } else if (tipoFlete === "maritimo") {
-        cbm = parseFloat(document.getElementById("cbmInput").value.trim());
-        if (isNaN(cbm) || cbm <= 0) {
-            alert("Por favor, ingresa un CBM válido para el flete marítimo.");
-            return;
-        }
-        cbm = cbm < 0.99 ? 1 : cbm; // Aproximar CBM mínimo
         tipoFleteTexto = "Flete Marítimo";
+        cbm = parseFloat(document.getElementById("cbmInput").value.trim());
+
+        // Aproximar CBM a 1 si es menor que 0.99
+        if (cbm < 0.99) {
+            cbm = 1;
+        }
+
+        pesoKg = cbm * 350;
         costoFlete = cbm * 185;
+        tramitesAduanales = 250;
+        cargosOrigen = 300;
+    } else if (tipoFlete === "maritimo20") {
+        tipoFleteTexto = "Flete Marítimo FCL 20";
+        costoFlete = 6900;
+        tramitesAduanales = 250;
+        cargosOrigen = 300;
+    } else if (tipoFlete === "maritimo40") {
+        tipoFleteTexto = "Flete Marítimo FCL 40";
+        costoFlete = 7500;
         tramitesAduanales = 250;
         cargosOrigen = 300;
     }
 
-    const costoSeguro = (valorCompra + costoFlete) * 0.015 * 1.1;
-
+    const costoSeguro = (((valorCompra + costoFlete) * 0.015)*1.1);
     const codigoArancelario = document.getElementById("codigoArancelario").value.trim();
     const porcentajeArancelario = codigosArancelarios[codigoArancelario];
-    if (porcentajeArancelario === undefined) {
-        alert("El código arancelario ingresado no está en la base de datos.");
-        return;
+
+    let costoDAI = 0;
+    let mensajeArancelario = "";
+
+    if (porcentajeArancelario !== undefined) {
+        costoDAI = (valorCompra + costoFlete + costoSeguro) * (porcentajeArancelario / 100);
+    } else {
+        mensajeArancelario = "Código Arancelario no encontrado";
     }
 
-    const costoDAI = (valorCompra + costoFlete + costoSeguro) * (porcentajeArancelario / 100);
     const valorIVA = (valorCompra + costoFlete + costoSeguro + costoDAI) * 0.13;
+
     const totalImportacion = costoFlete + costoSeguro + costoDAI + valorIVA + tramitesAduanales + cargosOrigen;
 
-    // Mostrar resultados
+    const total = valorCompra + totalImportacion;
+
     const resultContainer = document.getElementById("result");
-    resultContainer.innerHTML = `
+    resultContainer.innerHTML = 
         <p>Tipo de Flete: ${tipoFleteTexto}</p>
         <p>Costo de Flete: $${costoFlete.toFixed(2)}</p>
         <p>Costo de Seguro: $${costoSeguro.toFixed(2)}</p>
-        <p>Costo de DAI (${porcentajeArancelario}%): $${costoDAI.toFixed(2)}</p>
+        <p>Costo de DAI (${codigoArancelario !== '' ? Arancel ${porcentajeArancelario}% : 'No encontrado'}): $${costoDAI.toFixed(2)}</p>
         <p>Valor IVA (13%): $${valorIVA.toFixed(2)}</p>
         <p>Costo de Trámites Aduanales: $${tramitesAduanales.toFixed(2)}</p>
         <p>Cargos en Origen: $${cargosOrigen.toFixed(2)}</p>
         <p>Total Costo Trámites: $${totalImportacion.toFixed(2)}</p>
-    `;
+        <p>Total Importación: $${total.toFixed(2)}</p>
+    ;
 }
-
 
 // Función para limpiar el formulario
 function resetForm() {
@@ -191,10 +205,10 @@ function generarMensajeWhatsApp() {
     const resultado = resultContainer.innerText;
 
     // Generar el mensaje para WhatsApp
-    const mensajeWhatsApp = `Buen día, deseo más información para poder realizar mi importación, adjunto la cotización realizada en su página web:\n\n${resultado}`;
+    const mensajeWhatsApp = Buen día, deseo más información para poder realizar mi importación, adjunto la cotización realizada en su página web:\n\n${resultado};
 
     // Crear el enlace para enviar el mensaje por WhatsApp
-    const linkWhatsApp = `https://wa.me/50373989087?text=${encodeURIComponent(mensajeWhatsApp)}`;
+    const linkWhatsApp = https://wa.me/50373989087?text=${encodeURIComponent(mensajeWhatsApp)};
 
     // Abrir una nueva ventana o pestaña con el enlace
     window.open(linkWhatsApp);

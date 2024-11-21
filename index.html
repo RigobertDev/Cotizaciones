@@ -175,7 +175,7 @@ function calcularCostos(codigosArancelarios) {
     resultContainer.innerHTML = `
         <p>Tipo de Flete: ${tipoFleteTexto}</p>
         <p>Costo de Flete: $${costoFlete.toFixed(2)}</p>
-        <p>Costo de Seguro(1.5%): $${costoSeguro.toFixed(2)}</p>
+        <p>Costo de Seguro: $${costoSeguro.toFixed(2)}</p>
         <p>Costo de DAI (${codigoArancelario !== '' ? `Arancel ${porcentajeArancelario}%` : 'No encontrado'}): $${costoDAI.toFixed(2)}</p>
         <p>Valor IVA (13%): $${valorIVA.toFixed(2)}</p>
         <p>Costo de Trámites Aduanales: $${tramitesAduanales.toFixed(2)}</p>

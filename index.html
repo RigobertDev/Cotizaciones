@@ -159,7 +159,7 @@ function calcularCostos(codigosArancelarios) {
     let mensajeArancelario = "";
 
     if (porcentajeArancelario !== undefined) {
-        costoDAI = (valorCompra + costoFlete + costoSeguro) * (porcentajeArancelario / 100);
+        costoDAI = (valorCompra + costoFlete) * (porcentajeArancelario / 100);
     } else {
         mensajeArancelario = "Código Arancelario no encontrado";
     }

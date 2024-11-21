@@ -137,7 +137,7 @@ function calcularCostos(codigosArancelarios) {
         }
 
         pesoKg = cbm * 350;
-        costoFlete = cbm * 175;
+        costoFlete = cbm * 185;
         tramitesAduanales = 250;
         cargosOrigen = 300;
     } else if (tipoFlete === "maritimo20") {
@@ -164,7 +164,7 @@ function calcularCostos(codigosArancelarios) {
         mensajeArancelario = "Código Arancelario no encontrado";
     }
 
-    const costoSeguro = valorCompra * 0.015;
+    const costoSeguro = valorCompra + costoFlete * 0.025;
     const valorIVA = (valorCompra + costoFlete + costoSeguro + costoDAI) * 0.13;
 
     const totalImportacion = costoFlete + costoSeguro + costoDAI + valorIVA + tramitesAduanales + cargosOrigen;

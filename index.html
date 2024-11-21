@@ -164,7 +164,7 @@ function calcularCostos(codigosArancelarios) {
         mensajeArancelario = "Código Arancelario no encontrado";
     }
 
-    const costoSeguro = (valorCompra + costoFlete) * 0.025;
+    const costoSeguro = (valorCompra + costoFlete) * 0.115;
     const valorIVA = (valorCompra + costoFlete + costoSeguro + costoDAI) * 0.13;
 
     const totalImportacion = costoFlete + costoSeguro + costoDAI + valorIVA + tramitesAduanales + cargosOrigen;

@@ -73,30 +73,37 @@
 </div>
 
 <script>
-    // Función principal para cargar el archivo JSON de códigos arancelarios y luego calcular los costos
+    // Constantes para los costos
+    const COSTO_FLETE_AEREO_POR_KG = 18;
+    const COSTO_FLETE_MARITIMO_POR_CBM = 185;
+    const COSTO_FLETE_MARITIMO_20 = 6900;
+    const COSTO_FLETE_MARITIMO_40 = 7500;
+    const COSTO_TRAMITES_ADUANALES = 250;
+    const COSTO_TRAMITES_AEREO = 100;
+    const COSTO_CARGOS_ORIGEN = 300;
+    const COSTO_CARGOS_ORIGEN_AEREO = 25;
+    const PORCENTAJE_SEGURO = 0.015;
+    const PORCENTAJE_IVA = 0.13;
+
+    // Función para cargar y calcular costos
     function cargarYCalcular() {
         cargarCodigosArancelarios(calcularCostos);
     }
 
-    // Función para cargar el archivo JSON de códigos arancelarios
+    // Función para cargar los códigos arancelarios desde JSON
     function cargarCodigosArancelarios(callback) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.overrideMimeType("application/json");
         xhr.open('GET', 'codigos_arancelarios.json', true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 callback(JSON.parse(xhr.responseText));
-            } else if (xhr.readyState === 4) {
-                alert("Error al cargar los códigos arancelarios. Verifica el archivo JSON.");
             }
-        };
-        xhr.onerror = function () {
-            alert("Hubo un problema al cargar los datos del servidor. Inténtalo nuevamente.");
         };
         xhr.send(null);
     }
 
-    // Función para mostrar u ocultar campos según el tipo de flete seleccionado
+    // Función para mostrar/ocultar campos según el tipo de flete seleccionado
     function toggleCampos() {
         const tipoFlete = document.getElementById("tipoFlete").value;
         const campoPeso = document.getElementById("campoPeso");
@@ -121,16 +128,20 @@
     // Función para calcular los costos de importación
     function calcularCostos(codigosArancelarios) {
         const valorCompra = parseFloat(document.getElementById("valorCompra").value.trim());
+        const tipoFlete = document.getElementById("tipoFlete").value;
+
         if (isNaN(valorCompra) || valorCompra <= 0) {
             alert("Por favor, ingresa un valor de compra válido.");
             return;
         }
 
-        const tipoFlete = document.getElementById("tipoFlete").value;
-        let pesoKg = 0, cbm = 0, costoFlete = 0, tramitesAduanales = 0, cargosOrigen = 0;
+        let pesoKg = 0;
+        let cbm = 0;
+        let costoFlete = 0;
+        let tramitesAduanales = 0;
+        let cargosOrigen = 0;
         let tipoFleteTexto = "";
 
-        // Calcular costos según tipo de flete
         if (tipoFlete === "aereo") {
             pesoKg = parseFloat(document.getElementById("pesoKg").value.trim());
             if (isNaN(pesoKg) || pesoKg <= 0) {
@@ -138,9 +149,9 @@
                 return;
             }
             tipoFleteTexto = "Flete Aéreo";
-            costoFlete = pesoKg * 18;
-            tramitesAduanales = 100;
-            cargosOrigen = 25;
+            costoFlete = pesoKg * COSTO_FLETE_AEREO_POR_KG;
+            tramitesAduanales = COSTO_TRAMITES_AEREO;
+            cargosOrigen = COSTO_CARGOS_ORIGEN_AEREO;
         } else if (tipoFlete === "maritimo") {
             cbm = parseFloat(document.getElementById("cbmInput").value.trim());
             if (isNaN(cbm) || cbm <= 0) {
@@ -149,69 +160,60 @@
             }
             cbm = cbm < 0.99 ? 1 : cbm; // Aproximar CBM mínimo
             tipoFleteTexto = "Flete Marítimo";
-            costoFlete = cbm * 185;
-            tramitesAduanales = 250;
-            cargosOrigen = 300;
+            costoFlete = cbm * COSTO_FLETE_MARITIMO_POR_CBM;
+            tramitesAduanales = COSTO_TRAMITES_ADUANALES;
+            cargosOrigen = COSTO_CARGOS_ORIGEN;
+        } else if (tipoFlete === "maritimo20") {
+            tipoFleteTexto = "Flete Marítimo FCL 20";
+            costoFlete = COSTO_FLETE_MARITIMO_20;
+            tramitesAduanales = COSTO_TRAMITES_ADUANALES;
+            cargosOrigen = COSTO_CARGOS_ORIGEN;
+        } else if (tipoFlete === "maritimo40") {
+            tipoFleteTexto = "Flete Marítimo FCL 40";
+            costoFlete = COSTO_FLETE_MARITIMO_40;
+            tramitesAduanales = COSTO_TRAMITES_ADUANALES;
+            cargosOrigen = COSTO_CARGOS_ORIGEN;
         } else {
-            alert("Por favor, selecciona un tipo de flete.");
+            alert("Por favor, selecciona un tipo de flete válido.");
             return;
         }
 
-        // Calcular el seguro
-        const costoSeguro = (valorCompra + costoFlete) * 0.015 * 1.1;
-
-        // Validar y calcular el DAI según el código arancelario
         const codigoArancelario = document.getElementById("codigoArancelario").value.trim();
         const porcentajeArancelario = codigosArancelarios[codigoArancelario];
-        let costoDAI = 0;
 
-        if (porcentajeArancelario === undefined) {
-            alert("El código arancelario ingresado no está en la base de datos.");
-            return;
-        } else {
+        let costoSeguro = ((valorCompra + costoFlete) * PORCENTAJE_SEGURO) * 1.1;
+        let costoDAI = 0;
+        let mensajeArancelario = "";
+
+        if (porcentajeArancelario !== undefined) {
             costoDAI = (valorCompra + costoFlete + costoSeguro) * (porcentajeArancelario / 100);
+        } else {
+            mensajeArancelario = "Código Arancelario no encontrado.";
         }
 
-        // Calcular IVA y total de importación
-        const valorIVA = (valorCompra + costoFlete + costoSeguro + costoDAI) * 0.13;
+        const valorIVA = (valorCompra + costoFlete + costoSeguro + costoDAI) * PORCENTAJE_IVA;
         const totalImportacion = costoFlete + costoSeguro + costoDAI + valorIVA + tramitesAduanales + cargosOrigen;
+        const total = valorCompra + totalImportacion;
 
-        // Mostrar resultados
         const resultContainer = document.getElementById("result");
         resultContainer.innerHTML = `
             <p>Tipo de Flete: ${tipoFleteTexto}</p>
             <p>Costo de Flete: $${costoFlete.toFixed(2)}</p>
             <p>Costo de Seguro: $${costoSeguro.toFixed(2)}</p>
-            <p>Costo de DAI (${porcentajeArancelario}%): $${costoDAI.toFixed(2)}</p>
+            <p>Costo de DAI (${codigoArancelario !== '' ? `Arancel ${porcentajeArancelario}%` : 'No encontrado'}): $${costoDAI.toFixed(2)}</p>
             <p>Valor IVA (13%): $${valorIVA.toFixed(2)}</p>
             <p>Costo de Trámites Aduanales: $${tramitesAduanales.toFixed(2)}</p>
             <p>Cargos en Origen: $${cargosOrigen.toFixed(2)}</p>
             <p>Total Costo Trámites: $${totalImportacion.toFixed(2)}</p>
+            <p>Total Importación: $${total.toFixed(2)}</p>
         `;
     }
 
     // Función para limpiar el formulario
     function resetForm() {
-        document.getElementById("valorCompra").value = "";
-        document.getElementById("tipoFlete").value = "";
-        document.getElementById("pesoKg").value = "";
-        document.getElementById("cbmInput").value = "";
-        document.getElementById("codigoArancelario").value = "";
-        document.getElementById("campoPeso").style.display = "none";
-        document.getElementById("campoCbm").style.display = "none";
-        document.getElementById("mensajeMaritimo").style.display = "none";
+        document.getElementById("formImportacion").reset();
         document.getElementById("result").innerHTML = "";
-    }
-
-    // Función para generar un mensaje de WhatsApp
-    function generarMensajeWhatsApp() {
-        const resultContainer = document.getElementById("result");
-        const resultado = resultContainer.innerText;
-
-        const mensajeWhatsApp = `Buen día, deseo más información para poder realizar mi importación, adjunto la cotización realizada en su página web:\n\n${resultado}`;
-        const linkWhatsApp = `https://wa.me/50373989087?text=${encodeURIComponent(mensajeWhatsApp)}`;
-
-        window.open(linkWhatsApp);
+        toggleCampos();
     }
 </script>
 

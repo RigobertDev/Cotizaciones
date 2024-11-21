@@ -250,15 +250,48 @@
         `;
     }
 
-    // Función para limpiar el formulario
-    function resetForm() {
-        document.getElementById("formImportacion").reset();
-        document.getElementById("result").innerHTML = "";
-        toggleCampos();
+    // Función para resetear el formulario
+        function resetForm() {
+            document.getElementById("valorCompra").value = "";
+            document.getElementById("tipoFlete").value = "";
+            document.getElementById("pesoKg").value = "";
+            document.getElementById("cbmInput").value = "";
+            document.getElementById("codigoArancelario").value = "";
+            document.getElementById("result").innerHTML = "";
+            // Reset campos de tipo de flete
+            document.getElementById("campoPeso").style.display = "none";
+            document.getElementById("campoCbm").style.display = "none";
+            document.getElementById("mensajeMaritimo").style.display = "none";
     }
+    
+        // Función para mostrar u ocultar campos según el tipo de flete seleccionado
+        function toggleCampos() {
+            const tipoFlete = document.getElementById("tipoFlete").value;
+            const campoPeso = document.getElementById("campoPeso");
+            const campoCbm = document.getElementById("campoCbm");
+            const mensajeMaritimo = document.getElementById("mensajeMaritimo");
+            if (tipoFlete === "aereo") {
+                campoPeso.style.display = "block";
+                campoCbm.style.display = "none";
+                mensajeMaritimo.style.display = "none";
+            } else if (tipoFlete === "maritimo") {
+                campoPeso.style.display = "none";
+                campoCbm.style.display = "block";
+                mensajeMaritimo.style.display = "block";
+            } else {
+                campoPeso.style.display = "none";
+                campoCbm.style.display = "none";
+                mensajeMaritimo.style.display = "none";
+            }
+        }
+
+        // Función para generar el mensaje de WhatsApp
+        function generarMensajeWhatsApp() {
+            const mensaje = "Hola, necesito más información sobre la importación.";
+            const numeroWhatsApp = "50373989087"; // Número de WhatsApp para contactar
+            const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, '_blank');
 </script>
 
-
-<script src="funciones.js"></script>
 </body>
 </html>

@@ -264,27 +264,6 @@
             document.getElementById("mensajeMaritimo").style.display = "none";
     }
     
-        // Función para mostrar u ocultar campos según el tipo de flete seleccionado
-        function toggleCampos() {
-            const tipoFlete = document.getElementById("tipoFlete").value;
-            const campoPeso = document.getElementById("campoPeso");
-            const campoCbm = document.getElementById("campoCbm");
-            const mensajeMaritimo = document.getElementById("mensajeMaritimo");
-            if (tipoFlete === "aereo") {
-                campoPeso.style.display = "block";
-                campoCbm.style.display = "none";
-                mensajeMaritimo.style.display = "none";
-            } else if (tipoFlete === "maritimo") {
-                campoPeso.style.display = "none";
-                campoCbm.style.display = "block";
-                mensajeMaritimo.style.display = "block";
-            } else {
-                campoPeso.style.display = "none";
-                campoCbm.style.display = "none";
-                mensajeMaritimo.style.display = "none";
-            }
-        }
-
         // Función para generar el mensaje de WhatsApp
         function generarMensajeWhatsApp() {
             const mensaje = "Hola, necesito más información sobre la importación.";
